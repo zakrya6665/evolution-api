@@ -64,7 +64,9 @@ services:
     volumes:
       - evolution_redis:/data
     networks:
-      - app
+      app:
+       aliases:
+        - evolution_redis
     expose:
       - "6379"
 
