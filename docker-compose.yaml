@@ -25,14 +25,13 @@ services:
     ports:
       - "3000:80"
     networks:
-      - evolution-net
+      - supabase-net  # ← also put frontend on same net if needed
 
   redis:
     container_name: evolution_redis
     image: redis:latest
     restart: always
-    command: >
-      redis-server --port 6379 --appendonly yes
+    command: redis-server --port 6379 --appendonly yes
     volumes:
       - evolution_redis:/data
     networks:
@@ -45,6 +44,8 @@ services:
 volumes:
   evolution_instances:
   evolution_redis:
+
 networks:
   supabase-net:
-    name: supabase-net
+    external: true
+    name: jgc0so8kscs0c0k0scccks8o  # ← critical!
