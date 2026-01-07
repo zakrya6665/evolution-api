@@ -12,12 +12,48 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
     networks:
-      - supabase-net   # ← to reach Supabase Postgres
-      - app-net        # ← to reach Redis (and optionally frontend)
-    env_file:
-      - .env
-    expose:
-      - "8080"
+      - supabase
+      - app
+    environment:
+      # PostgreSQL Connection
+      DB_POSTGRESDB_HOST: supabase-db
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_USER: postgres
+      DB_POSTGRESDB_PASSWORD: tpsZbH0tBifK0amZbVMLVYX47EPkiEnj
+      DB_TYPE: postgresdb
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: tpsZbH0tBifK0amZbVMLVYX47EPkiEnj
+
+      # Critical: Prisma needs DATABASE_URL
+      DATABASE_URL: "postgresql://postgres:tpsZbH0tBifK0amZbVMLVYX47EPkiEnj@supabase-db:5432/postgres?schema=whatsapp"
+
+      # Schema search path for runtime
+      POSTGRES_EXTRA_OPTIONS: "-c search_path=whatsapp,public"
+
+      # Redis
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: "redis://evolution_redis:6379/6"
+
+      # Other required Evolution API settings
+      AUTHENTICATION_API_KEY: "your_actual_api_key_here"  # ← replace!
+      SERVER_URL: "https://whatsapp-api.hexabizsolutions.cloud"
+      LANGUAGE: "en"
+      CONFIG_SESSION_PHONE_CLIENT: "Evolution API V2"
+      DATABASE_PROVIDER: "postgresql"
+      DATABASE_CONNECTION_CLIENT_NAME: "evolution_v2"
+      DATABASE_SAVE_DATA_INSTANCE: "true"
+      DATABASE_SAVE_DATA_CHATS: "true"
+      DATABASE_SAVE_DATA_CONTACTS: "true"
+      DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
+      DATABASE_SAVE_MESSAGE_UPDATE: "true"
+      DATABASE_SAVE_DATA_HISTORIC: "true"
+      DATABASE_SAVE_DATA_LABELS: "true"
+      QRCODE_LIMIT: "30"
+      CHATWOOT_ENABLED: "true"
+      WEBHOOK_GLOBAL_ENABLED: "false"
+      RABBITMQ_ENABLED: "false"
+      CACHE_LOCAL_ENABLED: "false"
 
   redis:
     container_name: evolution_redis
@@ -27,29 +63,17 @@ services:
     volumes:
       - evolution_redis:/data
     networks:
-      - app-net        # ← only API needs to reach Redis
+      - app
     expose:
       - "6379"
-
-  # Optional: frontend (if you need UI)
-  frontend:
-    container_name: evolution_frontend
-    image: evoapicloud/evolution-manager:latest
-    restart: always
-    ports:
-      - "3000:80"
-    networks:
-      - app-net        # ← talks to API over internal network
-    environment:
-      - API_URL=http://evolution_api:8080  # if needed
 
 volumes:
   evolution_instances:
   evolution_redis:
 
 networks:
-  supabase-net:
+  supabase:
     external: true
-    name: jgc0so8kscs0c0k0scccks8o  # ← your real Supabase network
-  app-net:
+    name: supabase-net
+  app:
     driver: bridge
