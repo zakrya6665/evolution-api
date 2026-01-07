@@ -12,20 +12,12 @@ services:
     volumes:
       - evolution_instances:/evolution/instances
     networks:
-      - supabase-net
+      - supabase-net   # ← to reach Supabase Postgres
+      - app-net        # ← to reach Redis (and optionally frontend)
     env_file:
       - .env
     expose:
       - "8080"
-
-  frontend:
-    container_name: evolution_frontend
-    image: evoapicloud/evolution-manager:latest
-    restart: always
-    ports:
-      - "3000:80"
-    networks:
-      - supabase-net  # ← also put frontend on same net if needed
 
   redis:
     container_name: evolution_redis
@@ -35,11 +27,21 @@ services:
     volumes:
       - evolution_redis:/data
     networks:
-      supabase-net:
-        aliases:
-          - supabase-redis
+      - app-net        # ← only API needs to reach Redis
     expose:
       - "6379"
+
+  # Optional: frontend (if you need UI)
+  frontend:
+    container_name: evolution_frontend
+    image: evoapicloud/evolution-manager:latest
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - app-net        # ← talks to API over internal network
+    environment:
+      - API_URL=http://evolution_api:8080  # if needed
 
 volumes:
   evolution_instances:
@@ -48,4 +50,6 @@ volumes:
 networks:
   supabase-net:
     external: true
-    name: jgc0so8kscs0c0k0scccks8o  # ← critical!
+    name: jgc0so8kscs0c0k0scccks8o  # ← your real Supabase network
+  app-net:
+    driver: bridge
