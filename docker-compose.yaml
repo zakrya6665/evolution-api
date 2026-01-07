@@ -11,7 +11,7 @@ services:
       - "127.0.0.1:8080:8080"
     volumes:
       - evolution_instances:/evolution/instances
-      - ./app.env:/app/.env:ro
+      - ./app.env:/evolution/.env:ro
     networks:
       - supabase
       - app
