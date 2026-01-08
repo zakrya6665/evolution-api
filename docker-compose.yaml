@@ -14,20 +14,6 @@ services:
       - supabase
       - app
     environment:
-      DB_POSTGRESDB_HOST: supabase-db
-      DB_POSTGRESDB_PORT: "5432"
-      DB_POSTGRESDB_USER: postgres
-      DB_POSTGRESDB_PASSWORD: tpsZbH0tBifK0amZbVMLVYX47EPkiEnj
-      DB_TYPE: postgresdb
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: tpsZbH0tBifK0amZbVMLVYX47EPkiEnj
-      DATABASE_URL: postgresql://postgres:tpsZbH0tBifK0amZbVMLVYX47EPkiEnj@supabase-db:5432/postgres?schema=whatsapp
-      POSTGRES_EXTRA_OPTIONS: -c search_path=whatsapp,public
-      CACHE_REDIS_ENABLED: "true"
-      CACHE_REDIS_URI: redis://evolution_redis:6379/6
-      AUTHENTICATION_API_KEY: your_actual_api_key_here
-      SERVER_URL: https://whatsapp-api.hexabizsolutions.cloud
       LANGUAGE: en
       CONFIG_SESSION_PHONE_CLIENT: Evolution API V2
       DATABASE_PROVIDER: postgresql
