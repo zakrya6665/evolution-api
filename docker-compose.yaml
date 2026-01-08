@@ -14,8 +14,12 @@ services:
       - evolution_instances:/evolution/instances
       - ./app.env:/evolution/.env:ro
     networks:
-      - supabase
-      - app
+      supabase:
+        aliases:
+         - whatsapp_api
+      app:
+       aliases:
+        - whatsapp_api
     environment:
       LANGUAGE: en
       CONFIG_SESSION_PHONE_CLIENT: Evolution API V2
