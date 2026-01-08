@@ -1,12 +1,15 @@
+version: "3.8"
+
 services:
   api:
     container_name: evolution_api
     image: evoapicloud/evolution-api:latest
     restart: always
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     ports:
-      - 127.0.0.1:8080:8080
+      - "127.0.0.1:8080:8080"
     volumes:
       - evolution_instances:/evolution/instances
       - ./app.env:/evolution/.env:ro
@@ -15,7 +18,7 @@ services:
       - app
     environment:
       LANGUAGE: en
-      CONFIG_SESSION_PHONE_CLIENT: Evolution API V2
+      CONFIG_SESSION_PHONE_CLIENT: "Evolution API V2"
       DATABASE_PROVIDER: postgresql
       DATABASE_CONNECTION_CLIENT_NAME: evolution_v2
       DATABASE_SAVE_DATA_INSTANCE: "true"
@@ -30,17 +33,13 @@ services:
       WEBHOOK_GLOBAL_ENABLED: "false"
       RABBITMQ_ENABLED: "false"
       CACHE_LOCAL_ENABLED: "false"
-  frontend:
-    image: evoapicloud/evolution-manager:latest
-    container_name: evolution_manager
-    restart: always
-    ports:
-      - 3001:80
-    networks:
-      - app
-    environment:
-      - API_URL=http://evolution_api:8080
-      - API_KEY=«your-authentication-api-key»
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
   redis:
     container_name: evolution_redis
     image: redis:latest
@@ -54,9 +53,16 @@ services:
           - evolution_redis
     expose:
       - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
-  evolution_instances: null
-  evolution_redis: null
+  evolution_instances:
+  evolution_redis:
+
 networks:
   supabase:
     external: true
