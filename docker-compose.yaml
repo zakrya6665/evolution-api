@@ -1,5 +1,5 @@
+---
 version: "3.8"
-
 services:
   api:
     container_name: evolution_api
@@ -9,7 +9,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8080:8080"
+      - 127.0.0.1:8080:8080
     volumes:
       - evolution_instances:/evolution/instances
       - ./app.env:/evolution/.env:ro
@@ -18,7 +18,7 @@ services:
       - app
     environment:
       LANGUAGE: en
-      CONFIG_SESSION_PHONE_CLIENT: "Evolution API V2"
+      CONFIG_SESSION_PHONE_CLIENT: Evolution API V2
       DATABASE_PROVIDER: postgresql
       DATABASE_CONNECTION_CLIENT_NAME: evolution_v2
       DATABASE_SAVE_DATA_INSTANCE: "true"
@@ -35,22 +35,18 @@ services:
       CACHE_LOCAL_ENABLED: "false"
     healthcheck:
       test: >
-        ["CMD", "node", "-e",
-        "const http = require('http');\
-        const req = http.get('http://localhost:8080', (res) => {\
+        ["CMD", "node", "-e", "const http = require('http');\ const req =
+        http.get('http://localhost:8080', (res) => {\
           if (res.statusCode >= 200 && res.statusCode < 300) {\
             process.exit(0);\
           } else {\
             process.exit(1);\
           }\
-        });\
-        req.setTimeout(5000, () => process.exit(1));\
-        req.on('error', () => process.exit(1));"]
+        });\ req.setTimeout(5000, () => process.exit(1));\ req.on('error', () => process.exit(1));"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-
   redis:
     container_name: evolution_redis
     image: redis:latest
@@ -65,15 +61,16 @@ services:
     expose:
       - "6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "PING"]
+      test:
+        - CMD
+        - redis-cli
+        - PING
       interval: 10s
       timeout: 5s
       retries: 5
-
 volumes:
-  evolution_instances:
-  evolution_redis:
-
+  evolution_instances: null
+  evolution_redis: null
 networks:
   supabase:
     external: true
