@@ -31,7 +31,7 @@ services:
       RABBITMQ_ENABLED: "false"
       CACHE_LOCAL_ENABLED: "false"
   frontend:
-    image: evoapicloud/evolution-manager:v2.3.5
+    image: evoapicloud/evolution-manager:latest
     container_name: evolution_manager
     restart: always
     ports:
