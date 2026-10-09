@@ -1,5 +1,3 @@
----
-version: "3.8"
 services:
   api:
     container_name: evolution_api
@@ -16,10 +14,13 @@ services:
     networks:
       supabase:
         aliases:
-         - whatsapp_api
+          - whatsapp_api
       app:
-       aliases:
-        - whatsapp_api
+        aliases:
+          - whatsapp_api
+      hexasynq:
+        aliases:
+          - whatsapp_api
     environment:
       LANGUAGE: en
       CONFIG_SESSION_PHONE_CLIENT: Evolution API V2
@@ -73,3 +74,6 @@ networks:
     name: supabase-net
   app:
     driver: bridge
+  hexasynq:
+    external: true
+    name: HexaSynq
